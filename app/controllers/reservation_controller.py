@@ -24,10 +24,12 @@ def add_reservation():
         user_email=data.get('user_email')
     )
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
-    table_reservas = dynamo_resource.Table('Reservas')
-    table_funciones = dynamo_resource.Table('Funciones')
+    table_reservations = dynamo_resource.Table('Reservas')
+    table_functions = dynamo_resource.Table('Funciones')
+    table_movies = dynamo_resource.Table('Peliculas')
+    table_rooms = dynamo_resource.Table('Salas')
 
-    function_response = table_funciones.get_item(Key={'funcion_id': reservation.function_id})
+    function_response = table_functions.get_item(Key={'funcion_id': reservation.function_id})
     if 'Item' not in function_response:
         return jsonify({'error': 'Función no encontrada'}), 404
 
@@ -39,7 +41,7 @@ def add_reservation():
 
     new_asientos = function.asientos_disponibles - reservation.seats_selected
     try:
-        table_funciones.update_item(
+        table_functions.update_item(
             Key={'funcion_id': reservation.function_id},
             UpdateExpression="SET asientos_disponibles = :new",
             ExpressionAttributeValues={':new': new_asientos}
@@ -48,14 +50,30 @@ def add_reservation():
         return jsonify({'error': 'Error al actualizar asientos: ' + str(e)}), 500
 
     try:
-        table_reservas.put_item(Item=reservation.to_item())
+        table_reservations.put_item(Item=reservation.to_item())
     except Exception as e:
         return jsonify({'error': 'Error al guardar reserva: ' + str(e)}), 500
 
     # Enviar notificación de correo usando AWS SES
     ses_client = current_app.config['SES_CLIENT']
+
+    function_response = table_functions.get_item(Key={'funcion_id': reservation.function_id})
+    if 'Item' in function_response:
+        function = Function.from_item(function_response['Item'])
+        # Retrieve movie details
+        movie_response = table_movies.get_item(Key={'pelicula_id': function.movie_id})
+        movie_title = movie_response['Item'].get('title') if 'Item' in movie_response else 'Unknown'
+        # Retrieve room details
+        room_response = table_rooms.get_item(Key={'room_id': function.room_id})
+        room_name = room_response['Item'].get('name') if 'Item' in room_response else 'Unknown'
+        schedule = function.schedule
+    else:
+        movie_title = room_name = schedule = 'Unknown'
+
     subject = "Reserva Confirmada"
-    body = f"Su reserva (ID: {reservation.reserva_id}) ha sido confirmada."
+    body = (
+        f"Su reserva para la película '{movie_title}', en la sala '{room_name}' programada para {schedule} ha sido confirmada. (ID: {reservation.reserva_id})"
+    )
     send_email(ses_client, reservation.user_email, subject, body)
 
     return jsonify(reservation.to_item()), 201
@@ -65,10 +83,12 @@ def add_reservation():
 def update_reservation(reserva_id):
     data = request.get_json()
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
-    table_reservas = dynamo_resource.Table('Reservas')
-    table_funciones = dynamo_resource.Table('Funciones')
+    table_reservations = dynamo_resource.Table('Reservas')
+    table_functions = dynamo_resource.Table('Funciones')
+    table_movies = dynamo_resource.Table('Peliculas')
+    table_rooms = dynamo_resource.Table('Salas')
 
-    existing_response = table_reservas.get_item(Key={'reserva_id': reserva_id})
+    existing_response = table_reservations.get_item(Key={'reserva_id': reserva_id})
     if 'Item' not in existing_response:
         return jsonify({'error': 'Reserva no encontrada'}), 404
     existing_reservation = Reservation.from_item(existing_response['Item'])
@@ -81,18 +101,18 @@ def update_reservation(reserva_id):
 
     seat_diff = old_seats - new_seats  # Si positivo: se liberaron asientos; si negativo: se requieren más asientos
 
-    function_response = table_funciones.get_item(Key={'funcion_id': new_function_id})
+    function_response = table_functions.get_item(Key={'funcion_id': new_function_id})
     if 'Item' not in function_response:
         return jsonify({'error': 'Función no encontrada'}), 404
-    funcion = Function.from_item(function_response['Item'])
+    function = Function.from_item(function_response['Item'])
     
     if seat_diff < 0:
-        if funcion.available_seats < abs(seat_diff):
+        if function.available_seats < abs(seat_diff):
             return jsonify({'error': 'No hay suficientes asientos disponibles para la actualización'}), 400
 
-    new_available_seats = funcion.available_seats + seat_diff
+    new_available_seats = function.available_seats + seat_diff
     try:
-        table_funciones.update_item(
+        table_functions.update_item(
             Key={'funcion_id': new_function_id},
             UpdateExpression="SET available_seats = :new",
             ExpressionAttributeValues={':new': new_available_seats}
@@ -107,14 +127,37 @@ def update_reservation(reserva_id):
             ':s': new_seats,
             ':e': new_user_email
         }
-        table_reservas.update_item(
+        table_reservations.update_item(
             Key={'reserva_id': reserva_id},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values
         )
-        return jsonify({'message': f'Reserva "{reserva_id}" actualizada exitosamente'}), 200
     except Exception as e:
         return jsonify({'error': 'Error al actualizar reserva: ' + str(e)}), 500
+    
+    # Enviar notificación de correo usando AWS SES
+    ses_client = current_app.config['SES_CLIENT']
+
+    function_response = table_functions.get_item(Key={'funcion_id': new_function_id})
+    if 'Item' in function_response:
+        function = Function.from_item(function_response['Item'])
+        # Retrieve movie details
+        movie_response = table_movies.get_item(Key={'pelicula_id': function.movie_id})
+        movie_title = movie_response['Item'].get('title') if 'Item' in movie_response else 'Unknown'
+        # Retrieve room details
+        room_response = table_rooms.get_item(Key={'room_id': function.room_id})
+        room_name = room_response['Item'].get('name') if 'Item' in room_response else 'Unknown'
+        schedule = function.schedule
+    else:
+        movie_title = room_name = schedule = 'Unknown'
+
+    subject = "Reserva Actualizada"
+    body = (
+    f"Su reserva para la película '{movie_title}', en la sala '{room_name}' programada para {schedule} ha sido actualizada exitosamente. (ID: {reserva_id})"
+    )
+    send_email(ses_client, new_user_email, subject, body)
+
+    return jsonify({'message': f'Reserva "{reserva_id}" actualizada exitosamente'}), 200
 
 # Endpoint para eliminar una reserva
 @reservation_bp.route('/<string:reserva_id>', methods=['DELETE'])
@@ -146,6 +189,13 @@ def delete_reservation(reserva_id):
 
     try:
         table_reservas.delete_item(Key={'reserva_id': reserva_id})
-        return jsonify({'message': f'Reserva "{reserva_id}" eliminada exitosamente'}), 200
     except Exception as e:
         return jsonify({'error': 'Error al eliminar reserva: ' + str(e)}), 500
+    
+    # Enviar notificación de correo usando AWS SES
+    ses_client = current_app.config['SES_CLIENT']
+    subject = "Reserva Cancelada"
+    body = f"Su reserva (ID: {reserva_id}) ha sido cancelada."
+    send_email(ses_client, existing_reservation.user_email, subject, body)
+
+    return jsonify({'message': f'Reserva "{reserva_id}" eliminada exitosamente'}), 200
