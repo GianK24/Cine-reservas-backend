@@ -1,8 +1,8 @@
-# 🎬 Backend para Sistema de Reservas de Cine
+# Backend para Sistema de Reservas de Cine
 
 Este proyecto es un backend en Python utilizando **Flask** y **AWS DynamoDB**, diseñado para gestionar salas, películas, funciones y reservas de un cine.
 
-## 🚀 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - Python 3.10+
 - Flask
@@ -12,7 +12,7 @@ Este proyecto es un backend en Python utilizando **Flask** y **AWS DynamoDB**, d
 
 ---
 
-## 📦 Instalación y ejecución local
+## Instalación y ejecución local
 
 En este momento el codigo esta para correr en blender, pero si quiere correrlo de manera local modifique el archivo run.py con el siguiente contenido:
 ```bash
@@ -65,7 +65,7 @@ La app estará corriendo en: [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 🌐 Despliegue en Render (o plataformas similares)
+## Despliegue en Render (o plataformas similares)
 
 ### Requisitos:
 
