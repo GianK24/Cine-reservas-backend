@@ -38,15 +38,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/movies",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/movies",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"movies"
 					]
@@ -60,15 +58,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/movies",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/movies",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"movies"
 					]
@@ -91,15 +87,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/movies/{{pelicula_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/movies/{{pelicula_id}}",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"movies",
 						"{{pelicula_id}}"
@@ -140,15 +134,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/rooms",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/rooms",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"rooms"
 					]
@@ -162,15 +154,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/rooms",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/rooms",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"rooms"
 					]
@@ -193,15 +183,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/rooms/{{sala_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/rooms/{{sala_id}}",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"rooms",
 						"{{sala_id}}"
@@ -242,15 +230,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/functions/",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/functions/",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"functions",
 						""
@@ -265,15 +251,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/functions/",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/functions/",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"functions",
 						""
@@ -297,12 +281,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/functions/{{funcion_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/functions/{{funcion_id}}",
+					"protocol": "https",
 					"host": [
-						"localhost"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"functions",
 						"{{funcion_id}}"
@@ -342,15 +327,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/reservations",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/reservations",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"reservations"
 					]
@@ -364,15 +347,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/reservations/",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/reservations/",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"reservations",
 						""
@@ -396,15 +377,13 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/reservations/{{reserva_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/reservations/{{reserva_id}}",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"reservations",
 						"{{reserva_id}}"
@@ -419,15 +398,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/reservations/{{reserva_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/reservations/{{reserva_id}}",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"reservations",
 						"{{reserva_id}}"
@@ -442,38 +419,16 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/functions/{{funcion_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/functions/{{funcion_id}}",
+					"protocol": "https",
 					"host": [
-						"localhost"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"functions",
 						"{{funcion_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete movies",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://127.0.0.1:5000/movies/{{pelicula_id}}",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"movies",
-						"{{pelicula_id}}"
 					]
 				}
 			},
@@ -485,18 +440,37 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/rooms/{{sala_id}}",
-					"protocol": "http",
+					"raw": "https://cine-reservas-backend.onrender.com/rooms/{{sala_id}}",
+					"protocol": "https",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"cine-reservas-backend",
+						"onrender",
+						"com"
 					],
-					"port": "5000",
 					"path": [
 						"rooms",
 						"{{sala_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete movies",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://cine-reservas-backend.onrender.com/movies/{{pelicula_id}}",
+					"protocol": "https",
+					"host": [
+						"cine-reservas-backend",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"movies",
+						"{{pelicula_id}}"
 					]
 				}
 			},
