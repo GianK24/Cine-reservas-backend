@@ -26,3 +26,43 @@ def add_movie():
     table = dynamo_resource.Table('Peliculas')
     table.put_item(Item=movie.to_item())
     return jsonify(movie.to_item()), 201
+
+# Endpoint para actualizar una película existente
+@movie_bp.route('/<string:pelicula_id>', methods=['PUT'])
+def update_movie(pelicula_id):
+    data = request.get_json()
+    dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
+    table = dynamo_resource.Table('Peliculas')
+    
+    # Usamos alias para 'duration' porque es una palabra reservada
+    update_expression = "SET genre = :g, #d = :d, rating = :r"
+    expression_attribute_values = {
+        ':g': data.get('genre'),
+        ':d': data.get('duration'),
+        ':r': data.get('rating')
+    }
+    expression_attribute_names = {
+        "#d": "duration"
+    }
+    
+    try:
+        table.update_item(
+            Key={'pelicula_id': pelicula_id},
+            UpdateExpression=update_expression,
+            ExpressionAttributeValues=expression_attribute_values,
+            ExpressionAttributeNames=expression_attribute_names
+        )
+        return jsonify({'message': f'Película "{pelicula_id}" actualizada exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para eliminar una película
+@movie_bp.route('/<string:pelicula_id>', methods=['DELETE'])
+def delete_movie(pelicula_id):
+    dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
+    table = dynamo_resource.Table('Peliculas')
+    try:
+        table.delete_item(Key={'pelicula_id': pelicula_id})
+        return jsonify({'message': f'Película "{pelicula_id}" eliminada exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

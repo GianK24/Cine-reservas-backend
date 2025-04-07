@@ -24,3 +24,43 @@ def add_room():
     table = dynamo_resource.Table('Salas')
     table.put_item(Item=room.to_item())
     return jsonify(room.to_item()), 201
+
+# Endpoint para actualizar una sala existente
+@room_bp.route('/<string:room_id>', methods=['PUT'])
+def update_room(room_id):
+    data = request.get_json()
+    dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
+    table = dynamo_resource.Table('Salas')
+    
+    update_expression = "SET #n = :n, capacity = :c"
+    expression_attribute_values = {
+        ':n': data.get('name'),
+        ':c': data.get('capacity')
+    }
+    # Usamos un alias para el atributo name, ya que "name" es una palabra reservada en DynamoDB
+    expression_attribute_names = {
+        "#n": "name"
+    }
+    
+    try:
+        table.update_item(
+            Key={'room_id': room_id},
+            UpdateExpression=update_expression,
+            ExpressionAttributeValues=expression_attribute_values,
+            ExpressionAttributeNames=expression_attribute_names
+        )
+        return jsonify({'message': f'Sala "{room_id}" actualizada exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Endpoint para eliminar una sala
+@room_bp.route('/<string:room_id>', methods=['DELETE'])
+def delete_room(room_id):
+    dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
+    table = dynamo_resource.Table('Salas')
+    
+    try:
+        table.delete_item(Key={'room_id': room_id})
+        return jsonify({'message': f'Sala "{room_id}" eliminada exitosamente'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

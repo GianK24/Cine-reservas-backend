@@ -1,31 +1,25 @@
 import uuid
 
 class Reservation:
-    def __init__(self, movie_id, room_id, schedule, selected_seats, user_email, reserva_id=None):
+    def __init__(self, function_id, seats_selected, user_email, reserva_id=None):
         self.reserva_id = reserva_id or str(uuid.uuid4())
-        self.movie_id = movie_id
-        self.room_id = room_id
-        self.schedule = schedule
-        self.selected_seats = selected_seats  # Se espera una lista de asientos
+        self.function_id = function_id
+        self.seats_selected = seats_selected  
         self.user_email = user_email
 
     def to_item(self):
         return {
             'reserva_id': self.reserva_id,
-            'movie_id': self.movie_id,
-            'room_id': self.room_id,
-            'schedule': self.schedule,
-            'selected_seats': self.selected_seats,
+            'function_id': self.function_id,
+            'seats_selected': self.seats_selected,
             'user_email': self.user_email
         }
 
     @staticmethod
     def from_item(item):
         return Reservation(
-            reserva_id=item.get('reserva_id'),
-            movie_id=item.get('movie_id'),
-            room_id=item.get('room_id'),
-            schedule=item.get('schedule'),
-            selected_seats=item.get('selected_seats'),
-            user_email=item.get('user_email')
+            function_id=item.get('function_id'),
+            seats_selected=item.get('seats_selected'),
+            user_email=item.get('user_email'),
+            reserva_id=item.get('reserva_id')
         )
