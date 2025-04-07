@@ -36,14 +36,14 @@ def add_reservation():
     funcion_item = function_response['Item']
     function = Function.from_item(funcion_item)
 
-    if function.asientos_disponibles < reservation.seats_selected:
+    if function.available_seats < reservation.seats_selected:
         return jsonify({'error': 'No hay suficientes asientos disponibles'}), 400
 
-    new_asientos = function.asientos_disponibles - reservation.seats_selected
+    new_asientos = function.available_seats - reservation.seats_selected
     try:
         table_functions.update_item(
             Key={'funcion_id': reservation.function_id},
-            UpdateExpression="SET asientos_disponibles = :new",
+            UpdateExpression="SET available_seats = :new",
             ExpressionAttributeValues={':new': new_asientos}
         )
     except Exception as e:
@@ -64,7 +64,7 @@ def add_reservation():
         movie_response = table_movies.get_item(Key={'pelicula_id': function.movie_id})
         movie_title = movie_response['Item'].get('title') if 'Item' in movie_response else 'Unknown'
         # Retrieve room details
-        room_response = table_rooms.get_item(Key={'room_id': function.room_id})
+        room_response = table_rooms.get_item(Key={'sala_id': function.room_id})
         room_name = room_response['Item'].get('name') if 'Item' in room_response else 'Unknown'
         schedule = function.schedule
     else:
@@ -115,7 +115,12 @@ def update_reservation(reserva_id):
     if seat_diff < 0 and function.available_seats < abs(seat_diff):
         return jsonify({'error': 'No hay suficientes asientos disponibles para la actualización'}), 400
 
+    room_response = table_rooms.get_item(Key={'sala_id': function.room_id})
+    max_available_seats = room_response['Item'].get('capacity') if 'Item' in room_response else 0
     new_available_seats = function.available_seats + seat_diff
+    if new_available_seats > max_available_seats:
+        new_available_seats = max_available_seats
+
     try:
         table_functions.update_item(
             Key={'funcion_id': new_function_id},
@@ -159,7 +164,7 @@ def update_reservation(reserva_id):
         movie_response = table_movies.get_item(Key={'pelicula_id': function.movie_id})
         movie_title = movie_response['Item'].get('title') if 'Item' in movie_response else 'Unknown'
         # Retrieve room details
-        room_response = table_rooms.get_item(Key={'room_id': function.room_id})
+        room_response = table_rooms.get_item(Key={'sala_id': function.room_id})
         room_name = room_response['Item'].get('name') if 'Item' in room_response else 'Unknown'
         schedule = function.schedule
     else:

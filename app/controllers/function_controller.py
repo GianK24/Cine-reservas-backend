@@ -25,7 +25,7 @@ def add_function():
     table_movies = dynamo_resource.Table('Peliculas')
     table_functions = dynamo_resource.Table('Funciones')
 
-    room_response = table_rooms.get_item(Key={'room_id': room_id})
+    room_response = table_rooms.get_item(Key={'sala_id': room_id})
     if 'Item' not in room_response:
         return jsonify({'error': f'Room with room_id "{room_id}" not found'}), 404
 
@@ -60,7 +60,6 @@ def update_function(funcion_id):
     
     update_expression_parts = []
     expression_attribute_values = {}
-    expression_attribute_names = {}
 
     if 'room_id' in data:
         update_expression_parts.append("room_id = :r")
