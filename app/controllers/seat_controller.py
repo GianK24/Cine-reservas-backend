@@ -30,27 +30,6 @@ def create_seats(function_id):
     }), 201
 
 
-# Reserva un asiento (marca como ocupado)
-@seats_bp.route('/reserve/<string:seat_id>', methods=['PUT'])
-def reserve_seat(seat_id):
-    dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
-    table = dynamo_resource.Table('Asientos')
-
-    try:
-        response = table.update_item(
-            Key={'seat_id': seat_id},
-            UpdateExpression="SET is_taken = :val",
-            ExpressionAttributeValues={':val': True},
-            ReturnValues="UPDATED_NEW"
-        )
-        return jsonify({
-            'message': f'Asiento {seat_id} reservado exitosamente',
-            'seat': response['Attributes']
-        }), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
 # Obtiene los asientos de una función
 @seats_bp.route('/function/<string:function_id>', methods=['GET'])
 def get_seats_by_function(function_id):

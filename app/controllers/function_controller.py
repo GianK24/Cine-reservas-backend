@@ -47,6 +47,13 @@ def add_function():
 
     try:
         table_functions.put_item(Item=new_function.to_item())
+
+        with current_app.test_request_context():
+            from app.controllers.seat_controller import create_seats
+            request_data = {'total_seats': capacity}
+            with current_app.test_client() as client:
+                client.post(f'/seats/create/{new_function.funcion_id}', json=request_data)
+
         return jsonify(new_function.to_item()), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -96,6 +103,11 @@ def delete_function(funcion_id):
     table = dynamo_resource.Table('Funciones')
     
     try:
+        # Eliminar asientos relacionados antes de borrar la función
+        with current_app.test_request_context():
+            from app.controllers.seat_controller import delete_seats_by_function
+            delete_seats_by_function(funcion_id)
+                                     
         table.delete_item(Key={'funcion_id': funcion_id})
         return jsonify({'message': f'Function "{funcion_id}" deleted successfully'}), 200
     except Exception as e:
