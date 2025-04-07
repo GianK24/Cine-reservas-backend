@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
 ---
 
-## 🧪 Pruebas con Postman
+## Pruebas con Postman
 
 Puede utilizar **Postman** para probar los endpoints del sistema de reservas. Se incluye una colección exportada con las peticiones ya configuradas.
 
@@ -106,7 +106,7 @@ La colección aparecerá en tu lista. Desde allí podrás ejecutar todas las pet
 
 ---
 
-## 📂 Estructura del proyecto
+## Estructura del proyecto
 
 ```bash
 .
