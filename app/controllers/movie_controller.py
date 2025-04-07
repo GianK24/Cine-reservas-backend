@@ -34,23 +34,33 @@ def update_movie(pelicula_id):
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
     table = dynamo_resource.Table('Peliculas')
     
-    # Usamos alias para 'duration' porque es una palabra reservada
-    update_expression = "SET genre = :g, #d = :d, rating = :r"
-    expression_attribute_values = {
-        ':g': data.get('genre'),
-        ':d': data.get('duration'),
-        ':r': data.get('rating')
-    }
-    expression_attribute_names = {
-        "#d": "duration"
-    }
+    update_expression_parts = []
+    expression_attribute_values = {}
+    expression_attribute_names = {}
+
+    if 'genre' in data:
+        update_expression_parts.append("genre = :g")
+        expression_attribute_values[":g"] = data['genre']
+    if 'duration' in data:
+        update_expression_parts.append("#d = :d")
+        expression_attribute_values[":d"] = data['duration']
+        expression_attribute_names["#d"] = "duration"
+    if 'rating' in data:
+        update_expression_parts.append("rating = :r")
+        expression_attribute_values[":r"] = data['rating']
+
+    if not update_expression_parts:
+        return jsonify({'message': 'No se proporcionaron campos para actualizar'}), 400
+
+    update_expression = "SET " + ", ".join(update_expression_parts)
+
     
     try:
         table.update_item(
             Key={'pelicula_id': pelicula_id},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values,
-            ExpressionAttributeNames=expression_attribute_names
+            ExpressionAttributeNames=expression_attribute_names if expression_attribute_names else None
         )
         return jsonify({'message': f'Película "{pelicula_id}" actualizada exitosamente'}), 200
     except Exception as e:

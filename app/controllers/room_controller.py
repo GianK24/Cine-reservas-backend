@@ -31,17 +31,26 @@ def update_room(sala_id):
     data = request.get_json()
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
     table = dynamo_resource.Table('Salas')
-    
-    update_expression = "SET #n = :n, capacity = :c"
-    expression_attribute_values = {
-        ':n': data.get('name'),
-        ':c': data.get('capacity')
-    }
-    # Usamos un alias para el atributo name, ya que "name" es una palabra reservada en DynamoDB
-    expression_attribute_names = {
-        "#n": "name"
-    }
-    
+
+    update_expression_parts = []
+    expression_attribute_values = {}
+    expression_attribute_names = {}
+
+    if 'name' in data:
+        update_expression_parts.append("#n = :n")
+        expression_attribute_values[':n'] = data['name']
+        expression_attribute_names['#n'] = 'name'
+
+    if 'capacity' in data:
+        update_expression_parts.append("#c = :c")
+        expression_attribute_values[':c'] = data['capacity']
+        expression_attribute_names['#c'] = 'capacity'
+
+    if not update_expression_parts:
+        return jsonify({'message': 'No se proporcionaron campos para actualizar'}), 400
+
+    update_expression = "SET " + ", ".join(update_expression_parts)
+
     try:
         table.update_item(
             Key={'sala_id': sala_id},
@@ -52,6 +61,7 @@ def update_room(sala_id):
         return jsonify({'message': f'Sala "{sala_id}" actualizada exitosamente'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # Endpoint para eliminar una sala
 @room_bp.route('/<string:sala_id>', methods=['DELETE'])

@@ -58,13 +58,27 @@ def update_function(funcion_id):
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
     table = dynamo_resource.Table('Funciones')
     
-    update_expression = "SET room_id = :r, movie_id = :m, available_seats = :a, schedule = :s"
-    expression_attribute_values = {
-        ':r': data.get('room_id'),
-        ':m': data.get('movie_id'),
-        ':a': data.get('available_seats'),
-        ':s': data.get('schedule')
-    }
+    update_expression_parts = []
+    expression_attribute_values = {}
+    expression_attribute_names = {}
+
+    if 'room_id' in data:
+        update_expression_parts.append("room_id = :r")
+        expression_attribute_values[":r"] = data['room_id']
+    if 'movie_id' in data:
+        update_expression_parts.append("movie_id = :m")
+        expression_attribute_values[":m"] = data['movie_id']
+    if 'available_seats' in data:
+        update_expression_parts.append("available_seats = :a")
+        expression_attribute_values[":a"] = data['available_seats']
+    if 'schedule' in data:
+        update_expression_parts.append("schedule = :s")
+        expression_attribute_values[":s"] = data['schedule']
+
+    if not update_expression_parts:
+        return jsonify({'message': 'No se proporcionaron campos para actualizar'}), 400
+
+    update_expression = "SET " + ", ".join(update_expression_parts)
     
     try:
         table.update_item(

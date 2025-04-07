@@ -98,6 +98,12 @@ def update_reservation(reserva_id):
     new_seats = data.get('seats_selected', old_seats)
     new_user_email = data.get('user_email', existing_reservation.user_email)
 
+    if (
+        new_function_id == existing_reservation.function_id and
+        new_seats == old_seats and
+        new_user_email == existing_reservation.user_email
+    ):
+        return jsonify({'message': 'No se proporcionaron cambios para actualizar'}), 400
 
     seat_diff = old_seats - new_seats  # Si positivo: se liberaron asientos; si negativo: se requieren más asientos
 
@@ -106,9 +112,8 @@ def update_reservation(reserva_id):
         return jsonify({'error': 'Función no encontrada'}), 404
     function = Function.from_item(function_response['Item'])
     
-    if seat_diff < 0:
-        if function.available_seats < abs(seat_diff):
-            return jsonify({'error': 'No hay suficientes asientos disponibles para la actualización'}), 400
+    if seat_diff < 0 and function.available_seats < abs(seat_diff):
+        return jsonify({'error': 'No hay suficientes asientos disponibles para la actualización'}), 400
 
     new_available_seats = function.available_seats + seat_diff
     try:
@@ -120,13 +125,22 @@ def update_reservation(reserva_id):
     except Exception as e:
         return jsonify({'error': 'Error al actualizar función: ' + str(e)}), 500
 
+    update_expression_parts = []
+    expression_attribute_values = {}
+
+    if new_function_id != existing_reservation.function_id:
+        update_expression_parts.append("function_id = :f")
+        expression_attribute_values[":f"] = new_function_id
+    if new_seats != old_seats:
+        update_expression_parts.append("seats_selected = :s")
+        expression_attribute_values[":s"] = new_seats
+    if new_user_email != existing_reservation.user_email:
+        update_expression_parts.append("user_email = :e")
+        expression_attribute_values[":e"] = new_user_email
+
+    update_expression = "SET " + ", ".join(update_expression_parts)
+
     try:
-        update_expression = "SET function_id = :f, seats_selected = :s, user_email = :e"
-        expression_attribute_values = {
-            ':f': new_function_id,
-            ':s': new_seats,
-            ':e': new_user_email
-        }
         table_reservations.update_item(
             Key={'reserva_id': reserva_id},
             UpdateExpression=update_expression,
