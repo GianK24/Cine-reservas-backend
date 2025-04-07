@@ -30,10 +30,12 @@ def create_app():
     from app.controllers.room_controller import room_bp
     from app.controllers.reservation_controller import reservation_bp
     from app.controllers.function_controller import function_bp
+    from app.controllers.seat_controller import seats_bp
 
     app.register_blueprint(movie_bp, url_prefix='/movies')
     app.register_blueprint(room_bp, url_prefix='/rooms')
     app.register_blueprint(reservation_bp, url_prefix='/reservations')
     app.register_blueprint(function_bp, url_prefix='/functions')
+    app.register_blueprint(seats_bp, url_prefix='/seats' )
 
     return app
