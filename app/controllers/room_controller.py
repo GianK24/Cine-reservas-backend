@@ -26,8 +26,8 @@ def add_room():
     return jsonify(room.to_item()), 201
 
 # Endpoint para actualizar una sala existente
-@room_bp.route('/<string:room_id>', methods=['PUT'])
-def update_room(room_id):
+@room_bp.route('/<string:sala_id>', methods=['PUT'])
+def update_room(sala_id):
     data = request.get_json()
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
     table = dynamo_resource.Table('Salas')
@@ -44,23 +44,23 @@ def update_room(room_id):
     
     try:
         table.update_item(
-            Key={'room_id': room_id},
+            Key={'sala_id': sala_id},
             UpdateExpression=update_expression,
             ExpressionAttributeValues=expression_attribute_values,
             ExpressionAttributeNames=expression_attribute_names
         )
-        return jsonify({'message': f'Sala "{room_id}" actualizada exitosamente'}), 200
+        return jsonify({'message': f'Sala "{sala_id}" actualizada exitosamente'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 # Endpoint para eliminar una sala
-@room_bp.route('/<string:room_id>', methods=['DELETE'])
-def delete_room(room_id):
+@room_bp.route('/<string:sala_id>', methods=['DELETE'])
+def delete_room(sala_id):
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
     table = dynamo_resource.Table('Salas')
     
     try:
-        table.delete_item(Key={'room_id': room_id})
-        return jsonify({'message': f'Sala "{room_id}" eliminada exitosamente'}), 200
+        table.delete_item(Key={'sala_id': sala_id})
+        return jsonify({'message': f'Sala "{sala_id}" eliminada exitosamente'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
