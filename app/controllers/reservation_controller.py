@@ -29,10 +29,12 @@ def get_reservations():
 def add_reservation():
     data = request.get_json()
     reservation = Reservation(
-        function_id=data.get('function_id'),
-        seats_selected=data.get('seats_selected'),
-        user_email=data.get('user_email')
+    function_id=data.get('function_id'),
+    seats_selected=data.get('seats_selected'),
+    numeber_seats_selected=data.get('numeber_seats_selected'),
+    user_email=data.get('user_email')
     )
+
     dynamo_resource = current_app.config['DYNAMODB_RESOURCE']
     table_reservations = dynamo_resource.Table('Reservas')
     table_functions = dynamo_resource.Table('Funciones')
